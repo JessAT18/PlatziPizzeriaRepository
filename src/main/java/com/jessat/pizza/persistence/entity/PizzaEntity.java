@@ -26,11 +26,11 @@ public class PizzaEntity {
     private Double price;
 
     @Column(columnDefinition = "smallint")
-    private Boolean vegetarian;
+    private Integer vegetarian;
 
     @Column(columnDefinition = "smallint")
-    private Boolean vegan;
+    private Integer vegan;
 
     @Column(columnDefinition = "smallint", nullable = false)
-    private Boolean available;
+    private Integer available;
 }
