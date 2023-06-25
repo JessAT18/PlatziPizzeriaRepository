@@ -1,6 +1,6 @@
 package com.jessat.pizza.service;
 
-import com.jessat.pizza.persistence.PizzaRepository;
+import com.jessat.pizza.persistence.repository.PizzaRepository;
 import com.jessat.pizza.persistence.entity.PizzaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,10 @@ public class PizzaService {
 
     public PizzaEntity save(PizzaEntity pizza) {
         return this.pizzaRepository.save(pizza);
+    }
+
+    public void delete(int idPizza) {
+        this.pizzaRepository.deleteById(idPizza);
     }
 
     public Boolean exists(int idPizza) {
