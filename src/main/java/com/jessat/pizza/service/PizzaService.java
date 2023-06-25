@@ -28,6 +28,10 @@ public class PizzaService {
         return this.pizzaRepository.save(pizza);
     }
 
+    public void delete(int idPizza) {
+        this.pizzaRepository.deleteById(idPizza);
+    }
+
     public Boolean exists(int idPizza) {
         return this.pizzaRepository.existsById(idPizza);
     }
