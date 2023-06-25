@@ -2,7 +2,9 @@ package com.jessat.pizza.web.controller;
 
 import com.jessat.pizza.persistence.entity.PizzaEntity;
 import com.jessat.pizza.service.PizzaService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pizzas")
+@Slf4j
 public class PizzaController {
     private final PizzaService pizzaService;
 
@@ -29,18 +32,30 @@ public class PizzaController {
     }
 
     @PostMapping
-    public ResponseEntity<PizzaEntity> add(@RequestBody PizzaEntity pizza) {
-        if (pizza.getIdPizza() == null || !this.pizzaService.exists(pizza.getIdPizza())) {
-            return ResponseEntity.ok(this.pizzaService.save(pizza));
+    public ResponseEntity<?> save(@RequestBody PizzaEntity t){
+        try {
+            if (t.getIdPizza() == null || !this.pizzaService.exists(t.getIdPizza())) {
+                return ResponseEntity.ok(this.pizzaService.save(t));
+            }
+            // HTTP CODE: 400
+            // return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("La Pizza ya existe!");
+        } catch (Exception e) {
+            log.error("PizzaController: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
-        return ResponseEntity.badRequest().build();
     }
 
     @PutMapping
-    public ResponseEntity<PizzaEntity> update(@RequestBody PizzaEntity pizza) {
-        if (pizza.getIdPizza() == null || this.pizzaService.exists(pizza.getIdPizza())) {
-            return ResponseEntity.ok(this.pizzaService.save(pizza));
+    public ResponseEntity<?> update(@RequestBody PizzaEntity t){
+        try {
+            if (t.getIdPizza() != null || this.pizzaService.exists(t.getIdPizza())) {
+                return ResponseEntity.ok(this.pizzaService.save(t));
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("La Pizza no existe!");
+        } catch (Exception e) {
+            log.error("PizzaController: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
-        return ResponseEntity.badRequest().build();
     }
 }
