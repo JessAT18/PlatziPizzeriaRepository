@@ -28,6 +28,12 @@ public class PizzaService {
         return this.pizzaRepository.findAllByAvailableEqualsAndNameIgnoreCase(1, name);
     }
 
+    public List<PizzaEntity> getWith(String ingredient) {
+        return this.pizzaRepository.findAllByAvailableEqualsAndDescriptionContainingIgnoreCase(1, ingredient);
+    }
+    public List<PizzaEntity> getWithout(String ingredient) {
+        return this.pizzaRepository.findAllByAvailableEqualsAndDescriptionNotContainingIgnoreCase(1, ingredient);
+    }
     public PizzaEntity get(Integer idPizza) {
         return this.pizzaRepository.findById(idPizza).orElse(null);
     }
