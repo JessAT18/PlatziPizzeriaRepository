@@ -2,6 +2,7 @@ package com.jessat.pizza.web.controller;
 
 import com.jessat.pizza.persistence.entity.PizzaEntity;
 import com.jessat.pizza.service.PizzaService;
+import com.jessat.pizza.service.dto.UpdatePizzaPriceDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -89,6 +90,21 @@ public class PizzaController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PutMapping("/price")
+    public ResponseEntity<Void> updatePrice(@RequestBody UpdatePizzaPriceDto dto){
+        try {
+            if (this.pizzaService.exists(dto.getPizzaId())) {
+                this.pizzaService.updatePrice(dto);
+                return ResponseEntity.ok().build();
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();//.body("La Pizza no existe!");
+        } catch (Exception e) {
+            log.error("PizzaController: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 
     @DeleteMapping("/{idPizza}")
     public ResponseEntity<?> delete(@PathVariable int idPizza){
