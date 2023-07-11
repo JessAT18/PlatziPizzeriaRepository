@@ -43,5 +43,6 @@ public class OrderEntity {
 
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     //FetchType.EAGER: When we get an OrderEntity, automatically it will get this relation
+    @OrderBy("price DESC")
     private List<OrderItemEntity> items;
 }
