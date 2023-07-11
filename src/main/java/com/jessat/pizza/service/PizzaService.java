@@ -1,8 +1,12 @@
 package com.jessat.pizza.service;
 
+import com.jessat.pizza.persistence.repository.PizzaPagSortRepository;
 import com.jessat.pizza.persistence.repository.PizzaRepository;
 import com.jessat.pizza.persistence.entity.PizzaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,14 +14,17 @@ import java.util.List;
 @Service
 public class PizzaService {
     private final PizzaRepository pizzaRepository;
+    private final PizzaPagSortRepository pizzaPagSortRepository;
 
     @Autowired
-    public PizzaService(PizzaRepository pizzaRepository) {
+    public PizzaService(PizzaRepository pizzaRepository, PizzaPagSortRepository pizzaPagSortRepository) {
         this.pizzaRepository = pizzaRepository;
+        this.pizzaPagSortRepository = pizzaPagSortRepository;
     }
 
-    public List<PizzaEntity> getAll() {
-        return this.pizzaRepository.findAll();
+    public Page<PizzaEntity> getAll(Integer page, Integer elements) {
+        Pageable pageRequest = PageRequest.of(page, elements);
+        return this.pizzaPagSortRepository.findAll(pageRequest);
     }
 
     public List<PizzaEntity> getAvailable() {
@@ -25,7 +32,7 @@ public class PizzaService {
     }
 
     public PizzaEntity getByName(String name) {
-        return this.pizzaRepository.findAllByAvailableEqualsAndNameIgnoreCase(1, name);
+        return this.pizzaRepository.findFirstByAvailableEqualsAndNameIgnoreCase(1, name).orElseThrow(() -> new RuntimeException("La pizza no existe"));
     }
 
     public List<PizzaEntity> getWith(String ingredient) {
@@ -33,6 +40,9 @@ public class PizzaService {
     }
     public List<PizzaEntity> getWithout(String ingredient) {
         return this.pizzaRepository.findAllByAvailableEqualsAndDescriptionNotContainingIgnoreCase(1, ingredient);
+    }
+    public List<PizzaEntity> getCheapest(Double price) {
+        return this.pizzaRepository.findTop3ByAvailableEqualsAndPriceLessThanEqualOrderByPriceAsc(1, price);
     }
     public PizzaEntity get(Integer idPizza) {
         return this.pizzaRepository.findById(idPizza).orElse(null);
